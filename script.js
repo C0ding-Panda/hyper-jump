@@ -7,123 +7,123 @@ var render = Matter.Render.create({
         width: window.innerWidth,
         height: window.innerHeight,
         wireframes: false,
-        background: 'url(background2.png)',
-    }
+        background: "url(background2.png)",
+    },
 });
 
+let evenNums = [];
+for (let i = 0; i < 5; i++) {
+    let randomNum = Math.floor(Math.random() * (42 - 26 + 1)) + 26;
+    let evenNum = Math.floor(randomNum / 2) * 2;
+    if (evenNum < 26) {
+        evenNum += 2;
+    } else if (evenNum > 42) {
+        evenNum -= 2;
+    }
+    evenNums.push(evenNum);
+}
+
 var rectangle = Matter.Bodies.rectangle(100, 400, 80, 80, {
-    frictionAir: 0.1,
-    render: {fillStyle: "#FE89F9"},
+    frictionAir: 0.3,
+    render: {
+        sprite: {
+            texture: "character1.png",
+            xScale: 0.155,
+            yScale: 0.155,
+        },
+    },
 });
-var circleOfDeath = Matter.Bodies.circle(400, 100, 70, {
-    mass: 1000,
-    frictionAir: 0.2,
-})
-let bottomWall = Matter.Bodies.rectangle(0, 700, 3000, 519, {
-    render: {fillStyle: "transparent"}, 
-    isStatic: true, 
-});
-let rightWall = Matter.Bodies.rectangle(1455, 0, 10, 2000, {
-    render: {fillStyle: "red"},
+
+let bottomWall = Matter.Bodies.rectangle(600, 450, 1900, 20, {
+    render: { fillStyle: "transparent" },
     isStatic: true,
-})
+});
+let topWall = Matter.Bodies.rectangle(600, 0, 1900, 20, {
+    render: { fillStyle: "transparent" },
+    isStatic: true,
+});
+let rightWall = Matter.Bodies.rectangle(1455, 0, 40, 2000, {
+    render: { fillStyle: "transparent" },
+    isStatic: true,
+});
 let leftWall = Matter.Bodies.rectangle(5, 0, 10, 3000, {
-    render: {fillStyle: "blue"},
+    render: { fillStyle: "transparent" },
     isStatic: true,
-})
-const slide = Matter.Bodies.rectangle(800, 410, 400, 20, {
-    isStatic: true,
-    friction: 0, // Adjust this value to control the slide's "slipperiness"
-    angle: -Math.PI / 16,
 });
+let circle1 = Matter.Bodies.circle(200, 50, evenNums[0], {frictionAir: 0.5});
+let circle2 = Matter.Bodies.circle(500, 50, evenNums[1], {frictionAir: 0.5});
+let circle3 = Matter.Bodies.circle(800, 50, evenNums[2], {frictionAir: 0.5});
+let circle4 = Matter.Bodies.circle(1200, 50, evenNums[3], {frictionAir: 0.5});
+let circle5 = Matter.Bodies.circle(1500, 50, evenNums[4], {frictionAir: 0.5});
 
 engine.world.gravity.y = 7;
 Matter.World.add(engine.world, rectangle);
 Matter.World.add(engine.world, bottomWall);
+Matter.World.add(engine.world, topWall);
 Matter.World.add(engine.world, rightWall);
 Matter.World.add(engine.world, leftWall);
-Matter.World.add(engine.world, circleOfDeath);
-Matter.World.add(engine.world, slide);
+Matter.World.add(engine.world, circle1);
+Matter.World.add(engine.world, circle2);
+Matter.World.add(engine.world, circle3);
+Matter.World.add(engine.world, circle4);
+Matter.World.add(engine.world, circle5);
 Matter.Engine.run(engine);
 
-let counter = 0;
-
-
 setInterval(() => {
-    Matter.Body.applyForce(rectangle, rectangle.position, {x: -0.1, y: 0});
-    counter++;
-    document.getElementById("counter").innerHTML = counter;
-}, 200)
-
-setInterval(() => {
-    Matter.Body.setPosition(circleOfDeath, {x: 400, y: 100});
+    Matter.Body.setPosition(circle1, { x: 200, y: 50 });
+    Matter.Body.setPosition(circle2, { x: 500, y: 50 });
+    Matter.Body.setPosition(circle3, { x: 800, y: 50 });
+    Matter.Body.setPosition(circle4, { x: 1200, y: 50 });
+    Matter.Body.setPosition(circle5, { x: 1500, y: 50 });
 },1500)
 
-document.addEventListener("keydown", function(event) {
-    if (event.code === "ArrowUp") {
-        Matter.Body.applyForce(rectangle, rectangle.position, {x: 0, y: -0.1});
-    } else if (event.code === "ArrowDown") {
-        Matter.Body.applyForce(rectangle, rectangle.position, {x: 0, y: 0.1});
-    }
-    else if (event.code === "ArrowLeft") {
-        Matter.Body.applyForce(rectangle, rectangle.position, {x: -0.05, y: 0});
-    }
-    else if (event.code === "ArrowRight") {
-        Matter.Body.applyForce(rectangle, rectangle.position, {x: 0.1, y: 0});
-    }
-    else if (event.code === "ArrowUp" && event.code === "ArrowRight") {
-        Matter.Body.applyForce(rectangle, rectangle.position, {x: 0.2, y: -0.2});
+document.addEventListener("keydown", function (event) {
+    if (event.code === "ArrowLeft") {
+        Matter.Body.applyForce(rectangle, rectangle.position, {x: -0.1,y: 0,});
+    } else if (event.code === "ArrowRight") {
+        Matter.Body.applyForce(rectangle, rectangle.position, { x: 0.2, y: 0 });
     }
 });
 
-var collisionEventHandler = Matter.Events.on(
-    engine,
-    "collisionStart",
-    function (event) {
-        var pairs = event.pairs;
-        for (var i = 0; i < pairs.length; i++) {
-            var pair = pairs[i];
+// Create an array of circle bodies
+var circles = [circle1, circle2, circle3, circle4, circle5];
+
+
+// Set up collisions with the different circles
+Matter.Events.on(engine, "collisionStart", function (event) {
+    let pairs = event.pairs;
+    for (let i = 0; i < pairs.length; i++) {
+        let pair = pairs[i];
+        for (let j = 0; j < circles.length; j++) {
+            let circle = circles[j];
             if (
-                (pair.bodyA === rectangle && pair.bodyB === circleOfDeath) ||
-                (pair.bodyA === circleOfDeath && pair.bodyB === rectangle)
+                (pair.bodyA === rectangle && pair.bodyB === circle) ||
+                (pair.bodyA === circle && pair.bodyB === rectangle)
             ) {
-                rectangle.render.fillStyle = "red";
-                Matter.Body.applyForce(rectangle, rectangle.position, {x: 0.5, y: -0.5});
+                Matter.Body.setPosition(rectangle, { x: 100, y: 400 });
+                counter -= 2;
+                document.getElementById("counter").innerHTML = counter;
             }
         }
     }
-);
-
-
-Matter.Events.on(engine, 'beforeUpdate', function() {
-    Matter.Detector.canCollide(rectangle.collisionFilter, circleOfDeath.collisionFilter, collisionEventHandler);
 });
 
-var collisionEventHandler = Matter.Events.on(
-    engine,
-    "collisionStart",
-    function (event) {
-        var pairs = event.pairs;
-        for (var i = 0; i < pairs.length; i++) {
-            var pair = pairs[i];
-            if (
-                (pair.bodyA === rectangle && pair.bodyB === slide) ||
-                (pair.bodyA === slide && pair.bodyB === rectangle)
-            ) {
-                rectangle.frictionAir = 0;
-                rectangle.render.fillStyle = "white";
-                setTimeout(() => {
-                    rectangle.frictionAir = 0.1;
-                },1000)
+var counter = 0;
+
+Matter.Events.on(engine, "collisionStart", function (event) {
+    let pairs = event.pairs;
+    for (let i = 0; i < pairs.length; i++) {
+        let pair = pairs[i];
+        if (pair.bodyA === rectangle || pair.bodyB === rightWall) {
+            Matter.Body.setPosition(rectangle, { x: 100, y: 400 });
+            counter++;
+            document.getElementById("counter").innerHTML = counter;
+            var bounds = pair.bodyA.bounds;
+            if (bounds.max.x === engine.world.bounds.max.x) {
+                Matter.Body.setPosition(rectangle, { x: 200, y: 200 });
             }
         }
     }
-);
-
-// Add the collision event handler to the engine
-Matter.Events.on(engine, 'beforeUpdate', function() {
-    Matter.Detector.canCollide(slide.collisionFilter, rectangle.collisionFilter, collisionEventHandler);
 });
-rectangle.render.fillStyle = "blue";
 
 Matter.Render.run(render);
