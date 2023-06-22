@@ -50,11 +50,11 @@ let leftWall = Matter.Bodies.rectangle(5, 0, 10, 3000, {
     render: { fillStyle: "transparent" },
     isStatic: true,
 });
-let circle1 = Matter.Bodies.circle(200, 50, evenNums[0], {frictionAir: 0.5});
-let circle2 = Matter.Bodies.circle(500, 50, evenNums[1], {frictionAir: 0.5});
-let circle3 = Matter.Bodies.circle(800, 50, evenNums[2], {frictionAir: 0.5});
-let circle4 = Matter.Bodies.circle(1200, 50, evenNums[3], {frictionAir: 0.5});
-let circle5 = Matter.Bodies.circle(1500, 50, evenNums[4], {frictionAir: 0.5});
+let circle1 = Matter.Bodies.circle(400, 50, evenNums[0], {frictionAir: 0.5});
+let circle2 = Matter.Bodies.circle(700, 50, evenNums[1], {frictionAir: 0.5});
+let circle3 = Matter.Bodies.circle(1000, 50, evenNums[2], {frictionAir: 0.5});
+let circle4 = Matter.Bodies.circle(1400, 50, evenNums[3], {frictionAir: 0.5});
+let circle5 = Matter.Bodies.circle(1700, 50, evenNums[4], {frictionAir: 0.5});
 
 engine.world.gravity.y = 7;
 Matter.World.add(engine.world, rectangle);
@@ -70,11 +70,11 @@ Matter.World.add(engine.world, circle5);
 Matter.Engine.run(engine);
 
 setInterval(() => {
-    Matter.Body.setPosition(circle1, { x: 200, y: 50 });
-    Matter.Body.setPosition(circle2, { x: 500, y: 50 });
-    Matter.Body.setPosition(circle3, { x: 800, y: 50 });
-    Matter.Body.setPosition(circle4, { x: 1200, y: 50 });
-    Matter.Body.setPosition(circle5, { x: 1500, y: 50 });
+    Matter.Body.setPosition(circle1, { x: 400, y: 50 });
+    Matter.Body.setPosition(circle2, { x: 700, y: 50 });
+    Matter.Body.setPosition(circle3, { x: 1000, y: 50 });
+    Matter.Body.setPosition(circle4, { x: 1400, y: 50 });
+    Matter.Body.setPosition(circle5, { x: 1700, y: 50 });
 },1500)
 
 document.addEventListener("keydown", function (event) {
